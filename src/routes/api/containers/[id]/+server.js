@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { requireDb, requireUser } from '$lib/server/db.js';
+import { requireDb, requireUser, validateContainer } from '$lib/server/db.js';
 
 export async function GET({ params, locals }) {
   const db = requireDb(locals);
@@ -22,7 +22,7 @@ export async function PATCH({ params, request, locals }) {
   const body = await request.json();
   const label = (body.label ?? '').trim();
   const notes = (body.notes ?? '').trim() || null;
-  if (!label) throw error(400, 'label required');
+  validateContainer(label, notes);
   try {
     const result = await db
       .prepare('UPDATE containers SET label = ?, notes = ? WHERE id = ? AND user_id = ?')

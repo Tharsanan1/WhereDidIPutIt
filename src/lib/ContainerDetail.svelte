@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { api } from '$lib/api.js';
+  import { LIMITS } from '$lib/limits.js';
 
   export let id;
   export let kind; // 'file' | 'box'
@@ -75,8 +76,9 @@
     <div class="mt-1 flex items-start justify-between gap-3">
       <div class="min-w-0 flex-1">
         {#if editing}
-          <input class="input mb-2" bind:value={label} />
-          <input class="input" placeholder="Notes" bind:value={cnotes} />
+          <input class="input mb-2" bind:value={label} maxlength={LIMITS.LABEL_MAX} />
+          <div class="text-right text-xs text-slate-400">{label.length}/{LIMITS.LABEL_MAX}</div>
+          <input class="input" placeholder="Notes" bind:value={cnotes} maxlength={LIMITS.NOTES_MAX} />
         {:else}
           <h1 class="truncate text-2xl font-bold">{kind === 'file' ? '📁 File' : '📦 Box'} {container.label}</h1>
           {#if container.notes}<p class="text-sm text-slate-500">{container.notes}</p>{/if}
@@ -101,9 +103,11 @@
 
   {#if showAdd}
     <div class="card mb-4 space-y-3">
-      <input class="input" placeholder="Item name (e.g. Tax return 2023)" bind:value={name} />
-      <input class="input" placeholder="Tags (comma separated)" bind:value={tags} />
-      <input class="input" placeholder="Notes (optional)" bind:value={notes} />
+      <input class="input" placeholder="Item name (e.g. Tax return 2023)" bind:value={name} maxlength={LIMITS.ITEM_NAME_MAX} />
+      <div class="text-right text-xs text-slate-400">{name.length}/{LIMITS.ITEM_NAME_MAX}</div>
+      <input class="input" placeholder="Tags (comma separated, max {LIMITS.TAG_MAX_COUNT})" bind:value={tags} />
+      <div class="text-right text-xs text-slate-400">{tags ? tags.split(',').filter(t => t.trim()).length : 0}/{LIMITS.TAG_MAX_COUNT} tags</div>
+      <input class="input" placeholder="Notes (optional)" bind:value={notes} maxlength={LIMITS.NOTES_MAX} />
       {#if err}<p class="text-sm text-red-600">{err}</p>{/if}
       <button class="btn-primary w-full" on:click={addItem} disabled={!name.trim()}>Add Item</button>
     </div>

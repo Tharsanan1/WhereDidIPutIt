@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { requireDb, requireUser } from '$lib/server/db.js';
+import { requireDb, requireUser, validateItem, checkItemLimit } from '$lib/server/db.js';
 
 export async function POST({ request, locals }) {
   const db = requireDb(locals);
@@ -10,7 +10,8 @@ export async function POST({ request, locals }) {
   const notes = (body.notes ?? '').trim() || null;
   const tags = (body.tags ?? '').trim() || null;
   if (!container_id) throw error(400, 'container_id required');
-  if (!name) throw error(400, 'name required');
+  validateItem(name, notes, tags);
+  await checkItemLimit(db, user.id);
 
   const owns = await db
     .prepare('SELECT id FROM containers WHERE id = ? AND user_id = ?')

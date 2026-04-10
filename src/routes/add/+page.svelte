@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { api } from '$lib/api.js';
+  import { LIMITS } from '$lib/limits.js';
 
   let containers = [];
   let loading = true;
@@ -73,9 +74,11 @@
         {/each}
       </select>
 
-      <input class="input" placeholder="Item name (e.g. Tax return 2023)" bind:value={name} />
-      <input class="input" placeholder="Tags (comma separated)" bind:value={tags} />
-      <input class="input" placeholder="Notes (optional)" bind:value={notes} />
+      <input class="input" placeholder="Item name (e.g. Tax return 2023)" bind:value={name} maxlength={LIMITS.ITEM_NAME_MAX} />
+      <div class="text-right text-xs text-slate-400">{name.length}/{LIMITS.ITEM_NAME_MAX}</div>
+      <input class="input" placeholder="Tags (comma separated, max {LIMITS.TAG_MAX_COUNT})" bind:value={tags} />
+      <div class="text-right text-xs text-slate-400">{tags ? tags.split(',').filter(t => t.trim()).length : 0}/{LIMITS.TAG_MAX_COUNT} tags</div>
+      <input class="input" placeholder="Notes (optional)" bind:value={notes} maxlength={LIMITS.NOTES_MAX} />
 
       {#if err}<p class="text-sm text-red-600">{err}</p>{/if}
 

@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { requireDb, requireUser } from '$lib/server/db.js';
+import { requireDb, requireUser, validateItem } from '$lib/server/db.js';
 
 export async function PATCH({ params, request, locals }) {
   const db = requireDb(locals);
@@ -9,7 +9,7 @@ export async function PATCH({ params, request, locals }) {
   const notes = (body.notes ?? '').trim() || null;
   const tags = (body.tags ?? '').trim() || null;
   const container_id = Number(body.container_id);
-  if (!name) throw error(400, 'name required');
+  validateItem(name, notes, tags);
   if (!container_id) throw error(400, 'container_id required');
 
   const owns = await db

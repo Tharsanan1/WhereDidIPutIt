@@ -1,0 +1,8 @@
+export const LIMITS = {
+  MAX_ITEMS: 5000,
+  LABEL_MAX: 30,
+  NOTES_MAX: 100,
+  ITEM_NAME_MAX: 30,
+  TAG_MAX_COUNT: 10,
+  TAG_MAX_LENGTH: 10
+};

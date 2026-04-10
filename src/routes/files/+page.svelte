@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { api } from '$lib/api.js';
+  import { LIMITS } from '$lib/limits.js';
   let containers = [];
   let loading = true;
   let showAdd = false;
@@ -36,8 +37,9 @@
 
 {#if showAdd}
   <div class="card mb-4 space-y-3">
-    <input class="input" placeholder="Label (e.g. 12 or Tax 2023)" bind:value={label} />
-    <input class="input" placeholder="Notes (optional)" bind:value={notes} />
+    <input class="input" placeholder="Label (e.g. 12 or Tax 2023)" bind:value={label} maxlength={LIMITS.LABEL_MAX} />
+    <div class="text-right text-xs text-slate-400">{label.length}/{LIMITS.LABEL_MAX}</div>
+    <input class="input" placeholder="Notes (optional)" bind:value={notes} maxlength={LIMITS.NOTES_MAX} />
     {#if err}<p class="text-sm text-red-600">{err}</p>{/if}
     <button class="btn-primary w-full" on:click={create} disabled={!label.trim()}>Create File</button>
   </div>

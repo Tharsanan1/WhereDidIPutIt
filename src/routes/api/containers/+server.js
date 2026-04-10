@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { requireDb, requireUser } from '$lib/server/db.js';
+import { requireDb, requireUser, validateContainer } from '$lib/server/db.js';
 
 export async function GET({ url, locals }) {
   const db = requireDb(locals);
@@ -33,7 +33,7 @@ export async function POST({ request, locals }) {
   const label = (body.label ?? '').trim();
   const notes = (body.notes ?? '').trim() || null;
   if (!['file', 'box'].includes(kind)) throw error(400, 'kind must be file or box');
-  if (!label) throw error(400, 'label required');
+  validateContainer(label, notes);
   try {
     const result = await db
       .prepare('INSERT INTO containers (user_id, kind, label, notes) VALUES (?, ?, ?, ?)')
