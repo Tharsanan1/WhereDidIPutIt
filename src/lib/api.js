@@ -5,7 +5,12 @@ async function req(url, opts = {}) {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(text || `${res.status} ${res.statusText}`);
+    let msg = `${res.status} ${res.statusText}`;
+    try {
+      const json = JSON.parse(text);
+      msg = json.message || json.error || msg;
+    } catch { if (text) msg = text; }
+    throw new Error(msg);
   }
   if (res.status === 204) return null;
   return res.json();
