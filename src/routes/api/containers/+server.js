@@ -41,7 +41,7 @@ export async function POST({ request, locals }) {
       .run();
     return json({ id: result.meta.last_row_id, kind, label, notes }, { status: 201 });
   } catch (e) {
-    if (String(e).includes('UNIQUE')) throw error(409, `${kind} "${label}" already exists`);
-    throw e;
+    if (String(e).includes('UNIQUE')) throw error(409, 'A container with this label already exists');
+    throw error(500, 'Something went wrong');
   }
 }

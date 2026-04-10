@@ -1,13 +1,32 @@
 import { json, error } from '@sveltejs/kit';
 import { requireDb, requireUser, LIMITS } from '$lib/server/db.js';
 
+const MAX_IMPORT_CONTAINERS = 500;
+const MAX_IMPORT_ITEMS = 5000;
+const MAX_BODY_LENGTH = 2 * 1024 * 1024; // 2MB
+
 export async function POST({ request, locals }) {
   const db = requireDb(locals);
   const user = requireUser(locals);
+
+  // Reject oversized payloads before parsing
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > MAX_BODY_LENGTH) {
+    throw error(400, 'Import file too large (max 2MB)');
+  }
+
   const data = await request.json();
 
   if (!data.version || !Array.isArray(data.containers) || !Array.isArray(data.items)) {
     throw error(400, 'Invalid backup file format');
+  }
+
+  // Cap array sizes to prevent abuse
+  if (data.containers.length > MAX_IMPORT_CONTAINERS) {
+    throw error(400, `Too many containers in import (max ${MAX_IMPORT_CONTAINERS})`);
+  }
+  if (data.items.length > MAX_IMPORT_ITEMS) {
+    throw error(400, `Too many items in import (max ${MAX_IMPORT_ITEMS})`);
   }
 
   // Check total items won't exceed limit

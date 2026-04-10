@@ -31,14 +31,19 @@ export async function PATCH({ params, request, locals }) {
     if (!result.meta.changes) throw error(404, 'Not found');
     return json({ ok: true });
   } catch (e) {
-    if (String(e).includes('UNIQUE')) throw error(409, `Label "${label}" already exists`);
-    throw e;
+    if (String(e).includes('UNIQUE')) throw error(409, 'A container with this label already exists');
+    throw error(500, 'Something went wrong');
   }
 }
 
 export async function DELETE({ params, locals }) {
   const db = requireDb(locals);
   const user = requireUser(locals);
+  // Explicitly delete items first so FTS triggers fire (CASCADE may not trigger them)
+  await db
+    .prepare('DELETE FROM items WHERE container_id = ? AND user_id = ?')
+    .bind(params.id, user.id)
+    .run();
   const result = await db
     .prepare('DELETE FROM containers WHERE id = ? AND user_id = ?')
     .bind(params.id, user.id)
