@@ -1,8 +1,9 @@
 name = "wheredidiputit"
 compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "wdpi-db"
-database_id = "local-dev-placeholder"
+database_id = "f55694fa-d678-4d7c-8ba4-4631ac90b225"
