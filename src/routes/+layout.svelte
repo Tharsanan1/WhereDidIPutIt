@@ -6,7 +6,8 @@
     { href: '/', label: 'Search', icon: 'search' },
     { href: '/files', label: 'Files', icon: 'folder' },
     { href: '/boxes', label: 'Boxes', icon: 'box' },
-    { href: '/add', label: 'Add', icon: 'plus' }
+    { href: '/add', label: 'Add', icon: 'plus' },
+    { href: '/backup', label: 'Backup', icon: 'backup' }
   ];
 
   $: path = $page.url.pathname;
@@ -38,6 +39,8 @@
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-4-9 4m18 0v8l-9 4m9-12l-9 4m0 0l-9-4m9 4v8m-9-12v8l9 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
             {:else if t.icon === 'plus'}
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+            {:else if t.icon === 'backup'}
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             {/if}
           </span>
           <span class="text-[11px]">{t.label}</span>
