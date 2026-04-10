@@ -27,7 +27,7 @@ export async function POST({ request, locals }) {
     const kind = c.kind;
     const label = (c.label ?? '').trim();
     const notes = (c.notes ?? '').trim() || null;
-    if (!['file', 'box'].includes(kind) || !label || label.length > LIMITS.LABEL_MAX) {
+    if (!['file', 'box'].includes(kind) || !label || label.length > LIMITS.LABEL_MAX || (notes && notes.length > LIMITS.NOTES_MAX)) {
       containersSkipped++;
       continue;
     }
@@ -58,7 +58,11 @@ export async function POST({ request, locals }) {
     const name = (item.name ?? '').trim();
     const notes = (item.notes ?? '').trim() || null;
     const tags = (item.tags ?? '').trim() || null;
-    if (!name || name.length > LIMITS.ITEM_NAME_MAX) { itemsSkipped++; continue; }
+    if (!name || name.length > LIMITS.ITEM_NAME_MAX || (notes && notes.length > LIMITS.NOTES_MAX)) { itemsSkipped++; continue; }
+    if (tags) {
+      const tagList = tags.split(',').map(t => t.trim()).filter(Boolean);
+      if (tagList.length > LIMITS.TAG_MAX_COUNT || tagList.some(t => t.length > LIMITS.TAG_MAX_LENGTH)) { itemsSkipped++; continue; }
+    }
 
     // Skip duplicate: same name in same container
     const dup = await db
